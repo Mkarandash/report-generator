@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=reportsDb
+
+  backend:
+    build:
+      context: ./rg-backend
+      dockerfile: Dockerfile
+    volumes:
+      - './rg-backend:/app'
+      - '/app/node_modules'
+    ports:
+      - '3000:3000'
+    environment:
+      - MONGODB_PORT=mongodb://mongo:27017/reportsDb
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - mongo
+      
+  frontend:
+    build:
+      context: ./rg-frontend
+      dockerfile: Dockerfile
+    volumes:
+      - './rg-frontend:/app'
+      - '/app/node_modules'
+    ports:
+      - '8080:8080'
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - VUE_APP_REPORTS_SERVICE=http://localhost:3000/api
+    depends_on:
+      - backend
