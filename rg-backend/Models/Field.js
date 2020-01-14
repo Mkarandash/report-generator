@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 
 var FieldSchema = mongoose.Schema({
     name: { type: String },
-    prettyName: { type: String },
+    displayName: { type: String },
     isSearchable: { type: Boolean },
     isDisplayable: { type: Boolean },
     value: { type: Object },

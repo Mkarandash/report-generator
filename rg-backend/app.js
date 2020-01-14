@@ -11,7 +11,7 @@ var SearchController = require('./Controllers/SearchController')
 app.use(cors({origin: '*'}))
 app.use('/api/users', UserController)
 app.use('/api/projects', ProjectController)
-app.use('/api', TemplateController)
-app.use('/api/search', SearchController)
+app.use('/api/projects/:projectId/templates', TemplateController)
+app.use('/api/projects/:projectId/search', SearchController)
 
 module.exports = app

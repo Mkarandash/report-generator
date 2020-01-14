@@ -1,6 +1,7 @@
 var jwt = require('jsonwebtoken')
 var config = require('../config')
 var User = require('../Models/User')
+var Project = require('../Models/Project')
 
 module.exports = {
   verifyToken: (req, res, next) => {
@@ -25,8 +26,16 @@ module.exports = {
   
   verifyAdmin: (req, res, next) => {
     var hasPermission = req.user.scopes.find(x => x.projectId == req.params.projectId)
-    if (!hasPermission) return res.status(403).send("Permission denied -")
+    if (!hasPermission) return res.status(403).send("Permission denied")
     if (hasPermission.role != 'admin') return res.status(403).send("Permission denied")
     next()
+  },
+
+  getProjectData: (req, res, next) => {
+    Project.findById(req.params.projectId, function (err, project) {
+      if (err) return res.status(500).send("Server error: " + err)
+      req.project = project
+      next()
+    })
   }
 }

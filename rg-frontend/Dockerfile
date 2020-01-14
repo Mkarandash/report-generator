@@ -9,7 +9,7 @@ WORKDIR /app
 # install and cache app dependencies
 COPY package*.json ./
 RUN npm install
-RUN npm install @vue/cli@3.7.0 -g
+RUN npm install @vue/cli@4.1.2 -g
 
 # start app
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "serve"]

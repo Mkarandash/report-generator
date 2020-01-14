@@ -1,26 +1,26 @@
-const express = require('express')
-const router = express.Router()
-const bodyParser = require('body-parser')
-const middleware = require('../Helpers/Middleware')
-const filter = require('../Helpers/SearchMethods')
-const { Client } = require('@elastic/elasticsearch')
+var express = require('express')
+var router = express.Router({ mergeParams: true })
+var bodyParser = require('body-parser')
+var middleware = require('../Helpers/Middleware')
+var filter = require('../Helpers/SearchMethods')
+var { Client } = require('@elastic/elasticsearch')
+var Project = require('../Models/Project')
 
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 
-router.post("/index", middleware.verifyToken, function (req, res, next) {
-  const client = new Client({ node: req.body.elasticUrl })
-  client.indices.getMapping({ index: req.body.elasticIndex }, (err, result) => {
+router.get("/index", [middleware.verifyToken, middleware.verifyUser, middleware.getProjectData], function (req, res, next) {
+  const client = new Client({ node: req.project.elasticUrl })
+  client.indices.getMapping({ index: req.project.elasticIndex }, (err, result) => {
     if (err) return res.status(400).send(err)
     else return res.send(filter.filterResults(result))
   })
 })
 
-
-router.post("/field", middleware.verifyToken, function (req, res, next) {
-  let client = new Client({ node: req.body.project.elasticUrl })
+router.post("/field", [middleware.verifyToken, middleware.verifyUser, middleware.getProjectData], function (req, res, next) {
+  let client = new Client({ node: req.project.elasticUrl })
   client.search({
-    index: req.body.project.elasticIndex,
+    index: req.project.elasticIndex,
     body: {
       query: {
         bool: {
@@ -30,15 +30,15 @@ router.post("/field", middleware.verifyToken, function (req, res, next) {
                 bool: {
                   should: [{
                     multi_match: {
-                      query: req.body.field.value,
-                      fields: [req.body.field.name],
+                      query: req.body.value,
+                      fields: [req.body.name],
                       type: "cross_fields",
                       operator: "and"
                     }
                   },{
                     multi_match: {
-                      query: req.body.field.value,
-                      fields: [req.body.field.name],
+                      query: req.body.value,
+                      fields: [req.body.name],
                       type: "phrase_prefix",
                       operator: "and"
                     }
@@ -53,7 +53,7 @@ router.post("/field", middleware.verifyToken, function (req, res, next) {
       aggs: {
         results: {
           terms: {
-            field: req.body.field.name + '.keyword',
+            field: req.body.name + '.keyword',
             size: 5
           }
         }
@@ -68,10 +68,10 @@ router.post("/field", middleware.verifyToken, function (req, res, next) {
 });
 
 
-router.post("/", middleware.verifyToken, function(req, res, next) {
-  let client = new Client({ node: req.body.project.elasticUrl })
+router.post("/", [middleware.verifyToken, middleware.verifyUser, middleware.getProjectData], function(req, res, next) {
+  let client = new Client({ node: req.project.elasticUrl })
   let query = {
-    size: req.body.template.size,
+    size: req.body.size,
     query: {
       bool: {}
     }
@@ -79,7 +79,7 @@ router.post("/", middleware.verifyToken, function(req, res, next) {
   let must = []
   let filter = []
   
-  for (let field of req.body.template.fields.filter(x=>x.value || x.from || x.to)) {
+  for (let field of req.body.fields.filter(x=>x.value || x.from || x.to)) {
     if (field.type == "text") {
       let matchValue = {}
       matchValue[field.name] = field.value
@@ -103,7 +103,7 @@ router.post("/", middleware.verifyToken, function(req, res, next) {
     query.query.bool['filter'] = filter
   }
 
-  client.search({ index: req.body.project.elasticIndex, body: query }, (err, result) => {
+  client.search({ index: req.project.elasticIndex, body: query }, (err, result) => {
     if (err) return res.status(400).send(err)
     else res.send(result.body.hits.hits.map(x => x._source))
   })

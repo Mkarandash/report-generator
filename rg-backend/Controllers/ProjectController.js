@@ -4,6 +4,7 @@ var bodyParser = require('body-parser')
 var middleware = require('../Helpers/Middleware')
 var User = require('../Models/User')
 var Project = require('../Models/Project')
+var Template = require('../Models/Template')
 
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json());
@@ -48,7 +49,10 @@ router.put('/:projectId', [middleware.verifyToken, middleware.verifyAdmin], func
 router.delete('/:projectId', [middleware.verifyToken, middleware.verifyAdmin], function (req, res, next) {
   Project.findOneAndRemove({ _id: req.params.projectId }, function (err, project) {
     if (err) return res.status(500).send("Internal server error: " + err)
-    return res.status(200).send("Project has been deleted")
+    Template.remove({ projectId: req.params.projectId }, function (err, template) {
+      if (err) return res.status(500).send("Internal server error: " + err)
+      return res.status(200).send("Project has been deleted")
+    })
   })
 })
 
