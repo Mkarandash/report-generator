@@ -57,10 +57,12 @@ export default {
   },
   data () {
     return {
-      mini: true,
+      mini: false,
       items: [
-        { title: 'Search', icon: 'mdi-home-city', to: '/projects' },
-        { title: 'Administration', icon: 'mdi-account', to: '/administration' }
+        { title: 'Search', icon: 'mdi-file-find', to: '/projects' },
+        { title: 'Administration', icon: 'mdi-pencil-box', to: '/administration' },
+        { title: 'My profile', icon: 'mdi-account-circle', to: '/user' },
+        { title: 'Settings', icon: 'mdi-settings', to: '/settings' }
       ]
     }
   },

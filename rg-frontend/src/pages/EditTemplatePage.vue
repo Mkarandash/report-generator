@@ -33,6 +33,8 @@
       <v-data-table
         :headers="headers"
         :items="template.fields"
+        :loading="loading"
+        loading-text="Loading... Please wait"
       >
         <template v-slot:body="{ items }">
           <tbody>
@@ -58,6 +60,46 @@
         </template>
       </v-data-table>
     </v-container>
+    <v-container 
+      v-for="(chart, i) in template.charts"
+      :key=i
+      grid-list-lg
+    >
+      <v-layout
+        v-if="chart.type == 'PieChart'"
+        row
+        wrap
+      >
+        <v-text-field 
+          v-model="chart.title"
+          label="Title"
+          class="pa-3"
+        ></v-text-field>
+      </v-layout>
+      <v-layout
+        row
+        wrap
+      >
+        <v-select
+          v-model="chart.countBy"
+          :items="template.fields.map(x => x.name)"
+          class="pa-3"
+          label="Count number of each distinct value of entries"
+        ></v-select>
+      </v-layout>
+      <v-layout
+        v-if="chart.type == 'ColumnChart'"
+        row
+        wrap
+      >
+        <v-select
+          v-model="chart.separateBy"
+          :items="template.fields.map(x => x.name)"
+          class="pa-3"
+          label="Separate values by"
+        ></v-select>
+      </v-layout>
+    </v-container>
     <v-card-actions>
       <v-spacer/>
       <v-btn
@@ -82,6 +124,7 @@ import Axios from '@/plugins/axios'
 export default {
   data () {
     return {
+      loading: false,
       headers: [
         {
           sortable: true,
@@ -118,6 +161,7 @@ export default {
     }
   },
   mounted () {
+    this.loading = true
     Axios.get('/projects/' + this.$router.currentRoute.params.projectId + '/templates/' + this.$router.currentRoute.params.templateId)
       .then(resp => {
         this.template = resp.data
@@ -127,6 +171,9 @@ export default {
           color: 'erorr',
           text: err.response.data
         })
+      })
+      .finally(() => {
+        this.loading = false
       })
   },
   methods: {

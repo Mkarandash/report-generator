@@ -34,6 +34,8 @@
       <v-data-table
         :headers="headers"
         :items="template.fields"
+        :loading="loading"
+        loading-text="Loading... Please wait"
       >
         <template v-slot:body="{ items }">
           <tbody>
@@ -59,10 +61,91 @@
         </template>
       </v-data-table>
     </v-container>
+    <v-container grid-list-lg>
+      <v-layout
+        row
+        wrap
+      >
+        <v-checkbox
+          v-model="includePieChart"
+          label="Add Pie chart?"
+          class="pa-3"
+        ></v-checkbox>
+      </v-layout>
+      <div v-if="includePieChart">
+        <v-layout
+          row
+          wrap
+        >
+          <v-text-field
+            v-model="pieChart.title"
+            label="Title"
+            class="pa-3"
+          ></v-text-field>
+        </v-layout>
+        <v-layout
+          row
+          wrap
+        >
+          <v-select
+            v-model="pieChart.countBy"
+            :items="template.fields.map(x => x.name)"
+            class="pa-3"
+            label="Count number of each distinct value of entries"
+          ></v-select>
+        </v-layout>
+      </div>
+    </v-container>
+    <v-container grid-list-lg>
+      <v-layout
+        row
+        wrap
+      >
+        <v-checkbox
+          v-model="includeColumnChart"
+          label="Add Column chart?"
+          class="pa-3"
+        ></v-checkbox>
+      </v-layout>
+      <div v-if="includeColumnChart">
+        <v-layout
+          row
+          wrap
+        >
+          <v-text-field
+            v-model="columnChart.title"
+            label="Title"
+            class="pa-3"
+          ></v-text-field>
+        </v-layout>
+        <v-layout
+          row
+          wrap
+        >
+          <v-select
+            v-model="columnChart.countBy"
+            :items="template.fields.map(x => x.name)"
+            class="pa-3"
+            label="Count number of each distinct value of entries"
+          ></v-select>
+        </v-layout>
+        <v-layout
+          row
+          wrap
+        >
+          <v-select
+            v-model="columnChart.separateBy"
+            :items="template.fields.map(x => x.name)"
+            class="pa-3"
+            label="Separate entries by"
+          ></v-select>
+        </v-layout>
+      </div>
+    </v-container>
     <v-card-actions>
       <v-spacer/>
       <v-btn
-        class="pa-2"
+        class="pa-3"
         @click="createTemplate">
         Create template
       </v-btn>
@@ -78,7 +161,11 @@ import { event } from '@/main'
 export default {
   data () {
     return {
-      value2: true,
+      pieChart: {},
+      columnChart: {},
+      includePieChart: false,
+      includeColumnChart: false,
+      loading: false,
       headers: [
         {
           text: 'Elastic name',
@@ -109,26 +196,49 @@ export default {
       ],
       template: {
         fields: [],
+        charts: [],
         projectId: undefined
       }
     }
   },
   mounted () {
     this.template.projectId = this.$router.currentRoute.params.projectId
+    this.loading = true
     Axios.get('/projects/' + this.template.projectId + '/search/index')
       .then(resp => {
         this.template.fields = resp.data.filter(function (el) {
           return el != null
         })
-      }).catch(err => {
+      })
+      .catch(err => {
         event.$emit('notification', {
           color: 'error',
           text: err.response.data
         })
       })
+      .finally(() => {
+        this.loading = false
+      })
   },
   methods: {
     createTemplate () {
+      if (this.includePieChart) {
+        this.template.charts.push({
+          type: 'PieChart',
+          title: this.pieChart.title,
+          countBy: this.pieChart.countBy
+        })
+      }
+
+      if (this.includeColumnChart) {
+        this.template.charts.push({
+          type: 'ColumnChart',
+          title: this.columnChart.title,
+          countBy: this.columnChart.countBy,
+          entries: this.columnChart.entries
+        })
+      }
+
       Axios.post('/projects/' + this.template.projectId + '/templates', this.template)
         .then(() => {
           event.$emit('notification', {

@@ -1,9 +1,10 @@
 var mongoose = require('mongoose')
 
 var ChartSchema = mongoose.Schema({
-    name: { type: String },
+    title: { type: String },
     type: { type: String },
-    description: { type: String }
+    countBy: { type: String },
+    separateBy: { type: String }
 })
 
 module.exports = mongoose.model('Chart', ChartSchema)

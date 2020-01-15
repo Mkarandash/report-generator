@@ -1,6 +1,5 @@
 <template>
   <v-container
-    fill-height
     fluid
     grid-list-xl
   >
@@ -14,25 +13,21 @@
         sm12
         xs12
       >
-        <v-hover>
-          <template v-slot:default="{ hover }">
-            <v-card
-              style="cursor: pointer;"
-              @click="openTemplate(template._id)"
-            >
-              <v-card-title>{{ template.name }}</v-card-title>
-              <v-card-text>{{ template.description }}</v-card-text>
-              <v-fade-transition>
-                <v-overlay
-                  v-if="hover"
-                  absolute
-                  color="#036358"
-                >
-                  <v-btn>Open</v-btn>
-                </v-overlay>
-              </v-fade-transition>
-            </v-card>
-          </template>
+        <v-hover v-slot:default="{ hover }">
+          <v-card
+            style="cursor: pointer;"
+            @click="openTemplate(template._id)"
+          >
+            <v-card-title>{{ template.name }}</v-card-title>
+            <v-card-text>{{ template.description }}</v-card-text>
+            <v-expand-transition>
+              <div
+                v-if="hover"
+                class="d-flex transition-fast-in-fast-out indigo darken-1 v-card--reveal display-3 white--text"
+                style="height: 100%;"
+              ></div>
+            </v-expand-transition>
+          </v-card>
         </v-hover>
       </v-flex>
     </v-layout>
@@ -68,3 +63,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.v-card--reveal {
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
+  opacity: .5;
+  position: absolute;
+  width: 100%;
+}
+</style>

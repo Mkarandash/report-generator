@@ -7,7 +7,7 @@
     :loading="isLoading"
     :search-input.sync="search"
     @input="$emit('input', $event)"
-    placeholder="Start typing to Search"
+    placeholder="Start typing to get suggestions"
     hide-no-data
     clearable
     hide-selected
