@@ -7,6 +7,7 @@
         wrap
       >
         <v-text-field
+          :disabled="disabled"
           v-model="project.name"
           label="Project name"
           clearable
@@ -18,6 +19,7 @@
         wrap
       >
         <v-text-field
+          :disabled="disabled"
           v-model="project.description"
           label="Project description"
           clearable
@@ -29,6 +31,7 @@
         wrap
       >
         <v-text-field
+          :disabled="disabled"
           v-model="project.elasticUrl"
           label="Elasticsearch url"
           clearable
@@ -40,6 +43,7 @@
         wrap
       >
         <v-text-field
+          :disabled="disabled"
           v-model="project.elasticIndex"
           label="Elasticsearch index"
           clearable
@@ -49,8 +53,12 @@
     </v-container>
     <v-card-actions>
       <v-spacer/>
-      <v-btn @click="createProject">
-        Continue
+      <v-btn
+        color="success"
+        :loading="disabled"
+        @click="createProject"
+      >
+        Create project
       </v-btn>
       <v-spacer/>
     </v-card-actions>
@@ -64,7 +72,8 @@ import { event } from '@/main'
 export default {
   data () {
     return {
-      project: {}
+      project: {},
+      disabled: false
     }
   },
   methods: {
@@ -76,6 +85,7 @@ export default {
         })
         return
       }
+      this.disabled = true
       Axios.post('/projects', this.project)
         .then(resp => {
           event.$emit('notification', {
@@ -89,6 +99,9 @@ export default {
             color: 'error',
             text: err.response.data
           })
+        })
+        .finally(() => {
+          this.disabled = false
         })
     }
   }

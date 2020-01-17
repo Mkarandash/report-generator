@@ -8,13 +8,33 @@
       justify-center
     >
       <v-flex
-        xs10
-        sm6
-        md4
+        xs12
+        sm8
+        md6
         lg4
       >
         <v-card>
-          <v-card-title class="justify-center">Sign in</v-card-title>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-chip
+                class="ma-2"
+                outlined
+                to="/register"
+                style="position: absolute; right: 10px; top: 10px; cursor: pointer;"
+                v-on="on"
+                color="#ffffff"
+              >
+                <v-icon>mdi-repeat</v-icon>
+              </v-chip>
+            </template>
+            <span>Switch to registration form</span>
+          </v-tooltip>
+          <v-card-title
+            class="justify-center white--text"
+            style="background-color: #2196f3;"
+          >
+            Sign in
+          </v-card-title>
           <v-form>
             <v-container pa-4>
               <v-layout wrap>
@@ -25,6 +45,7 @@
                   <v-text-field
                     v-model="user.name"
                     label="User Name"
+                    class="pa-3"
                   ></v-text-field>
                 </v-flex>
                 <v-flex
@@ -35,6 +56,7 @@
                     v-model="user.password"
                     label="Password"
                     type="password"
+                    class="pa-3"
                   ></v-text-field>
                 </v-flex>
                 <v-flex

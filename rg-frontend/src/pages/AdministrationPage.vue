@@ -13,6 +13,7 @@
       >
         <v-hover v-slot:default="{ hover }">
           <v-card
+            class="ml-3 mt-3"
             style="cursor: pointer;"
             @click="createNewProject"
           >
@@ -21,7 +22,7 @@
             <v-expand-transition>
               <div
                 v-if="hover"
-                class="d-flex transition-fast-in-fast-out indigo darken-1 v-card--reveal display-3 white--text"
+                class="d-flex transition-fast-in-fast-out blue v-card--reveal display-3 white--text"
                 style="height: 100%;"
               ></div>
             </v-expand-transition>
@@ -39,6 +40,7 @@
       >
         <v-hover v-slot:default="{ hover }">
           <v-card
+            class="ml-3 mt-3"
             style="cursor: pointer;"
             @click="editProject(project._id)"
           >
@@ -47,7 +49,7 @@
             <v-expand-transition>
               <div
                 v-if="hover"
-                class="d-flex transition-fast-in-fast-out indigo darken-1 v-card--reveal display-3 white--text"
+                class="d-flex transition-fast-in-fast-out blue v-card--reveal display-3 white--text"
                 style="height: 100%;"
               ></div>
             </v-expand-transition>

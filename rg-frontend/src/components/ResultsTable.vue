@@ -68,9 +68,6 @@ export default {
     values: {
       type: Array
     },
-    loading: {
-      type: Boolean
-    },
     charts: {
       type: Array
     }
@@ -82,7 +79,6 @@ export default {
   methods: {
     convertOptions (chart) {
       let options = { chart: { title: chart.title } }
-      console.log(options)
       return options
     },
     convertPieChartData (chart) {

@@ -3,9 +3,10 @@
     <v-card
       style="position: fixed; top: 5%; right: 2%; z-index: 2;">
       <v-btn
-        v-if="searchSuccessful"
+        :disabled="disabled"
+        v-if="success"
         icon
-        @click.stop="success = !success"
+        @click.stop="success = false"
       >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
@@ -25,6 +26,7 @@
             >
               <v-flex v-if="field.type == 'text'">
                 <text-autocomplete
+                  :disabled="disabled"
                   v-model="field.value"
                   :name="field.name"
                   :label="field.displayName ? field.displayName : field.name"
@@ -36,16 +38,20 @@
                   wrap
                 >
                   <v-text-field
+                    :disabled="disabled"
                     v-model="field.from"
                     :label="field.displayName ? field.displayName + ': from' : field.name + ': from'"
                     type="number"
+                    min="1"
                     clearable
                     class="pa-3"
                   />
                   <v-text-field
+                    :disabled="disabled"
                     v-model="field.to"
                     :label="field.displayName ? field.displayName + ': to' : field.name + ': to'"
                     type="number"
+                    min="1"
                     clearable
                     class="pa-3"
                   />
@@ -57,6 +63,7 @@
                   wrap
                 >
                   <date-time-picker
+                    :disabled="disabled"
                     v-model="field.from"
                     :label="field.displayName ? field.displayName + ': from' : field.name + ': from'"
                     :id="field._id"
@@ -64,6 +71,7 @@
                     class="pa-3"
                   />
                   <date-time-picker
+                    :disabled="disabled"
                     v-model="field.to"
                     :label="field.displayName ? field.displayName + ': to' : field.name + ': to'"
                     format="YYYY-MM-DDTHH:mm:ss"
@@ -78,6 +86,7 @@
             >
               <v-flex>
                 <v-text-field
+                  :disabled="disabled"
                   v-model="template.size"
                   type="number"
                   class="pa-3"
@@ -89,7 +98,13 @@
         </v-container>
         <v-card-actions>
           <v-spacer/>
-          <v-btn @click="search">Search</v-btn>
+          <v-btn
+            :loading="disabled"
+            color="success"
+            @click="search"
+          >
+            Search
+          </v-btn>
           <v-spacer/>
         </v-card-actions>
       </v-card>
@@ -117,6 +132,7 @@ export default {
   },
   data () {
     return {
+      disabled: false,
       items: [],
       headers: [],
       values: [],
@@ -124,8 +140,7 @@ export default {
         fields: []
       },
       results: [],
-      success: false,
-      searchSuccessful: false
+      success: false
     }
   },
   mounted: function () {
@@ -142,6 +157,7 @@ export default {
   },
   methods: {
     search () {
+      this.disabled = true
       let data = { size: this.template.size, fields: this.template.fields}
       Axios.post('/projects/' + this.$router.currentRoute.params.projectId +'/search', data)
         .then(resp => {
@@ -156,13 +172,15 @@ export default {
           this.values = this.template.fields.filter(x => x.isDisplayable === true).map(f => f.name)
           this.results = resp.data
           this.success = true
-          this.searchSuccessful = true
         })
         .catch(err => {
           event.$emit('notification', {
             color: 'error',
             text: err.response.data
           })
+        })
+        .finally(() => {
+          this.disabled = false
         })
     }
   }

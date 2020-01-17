@@ -7,6 +7,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="template.name"
           class="pa-3"
           label="Template name"/>
@@ -16,6 +17,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="template.description"
           class="pa-3"
           label="Template description"/>
@@ -25,6 +27,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="template.size"
           type="number"
           class="pa-3"
@@ -32,6 +35,7 @@
         />
       </v-layout>
       <v-data-table
+        :disabled="disabled"
         :headers="headers"
         :items="template.fields"
         :loading="loading"
@@ -67,6 +71,7 @@
         wrap
       >
         <v-checkbox
+          :disabled="disabled"
           v-model="includePieChart"
           label="Add Pie chart?"
           class="pa-3"
@@ -78,6 +83,7 @@
           wrap
         >
           <v-text-field
+            :disabled="disabled"
             v-model="pieChart.title"
             label="Title"
             class="pa-3"
@@ -88,6 +94,7 @@
           wrap
         >
           <v-select
+            :disabled="disabled"
             v-model="pieChart.countBy"
             :items="template.fields.map(x => x.name)"
             class="pa-3"
@@ -102,6 +109,7 @@
         wrap
       >
         <v-checkbox
+          :disabled="disabled"
           v-model="includeColumnChart"
           label="Add Column chart?"
           class="pa-3"
@@ -113,6 +121,7 @@
           wrap
         >
           <v-text-field
+            :disabled="disabled"
             v-model="columnChart.title"
             label="Title"
             class="pa-3"
@@ -123,6 +132,7 @@
           wrap
         >
           <v-select
+            :disabled="disabled"
             v-model="columnChart.countBy"
             :items="template.fields.map(x => x.name)"
             class="pa-3"
@@ -134,6 +144,7 @@
           wrap
         >
           <v-select
+            :disabled="disabled"
             v-model="columnChart.separateBy"
             :items="template.fields.map(x => x.name)"
             class="pa-3"
@@ -145,8 +156,11 @@
     <v-card-actions>
       <v-spacer/>
       <v-btn
-        class="pa-3"
-        @click="createTemplate">
+        :disabled="disabled"
+        color="success"
+        class="pa-3 mb-3"
+        @click="createTemplate"
+      >
         Create template
       </v-btn>
       <v-spacer/>

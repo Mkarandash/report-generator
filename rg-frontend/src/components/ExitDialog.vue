@@ -3,15 +3,20 @@
     v-model="dialog"
     width="500">
     <v-card>
-      <v-card-title class="justify-center">Are you sure you want to leave?</v-card-title>
+      <v-card-title class="justify-center pa-3">Are you sure you want to leave?</v-card-title>
+      <v-card-text class="pa-3">All unsaved data will be lost</v-card-text>
       <v-card-actions>
         <v-spacer/>
         <v-btn
-          @click="dialog = false">
+          color="success"
+          @click="dialog = false"
+        >
           Cancel
         </v-btn>
         <v-btn
-          @click="logout">
+          color="error"
+          @click="logout"
+        >
           Confirm
         </v-btn>
         <v-spacer/>

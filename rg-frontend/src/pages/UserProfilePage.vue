@@ -7,6 +7,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="user.name"
           class="pa-3"
           label="User name"/>
@@ -16,6 +17,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="user.email"
           class="pa-3"
           label="Email"/>
@@ -25,6 +27,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="user.fitstName"
           class="pa-3"
           label = "First name"
@@ -35,6 +38,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="user.lastName"
           class="pa-3"
           label = "Last name"
@@ -45,6 +49,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="user.occupation"
           class="pa-3"
           label = "Occupation"
@@ -55,6 +60,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="user.country"
           class="pa-3"
           label = "Country"
@@ -65,6 +71,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="user.city"
           class="pa-3"
           label = "City"
@@ -73,7 +80,13 @@
     </v-container>
     <v-card-actions>
       <v-spacer />
-      <v-btn @click="updateProfile">Update profile</v-btn>
+      <v-btn
+        :loading="disabled"
+        @click="updateProfile"
+        color="success"
+      >
+        Update profile
+      </v-btn>
       <v-spacer />
     </v-card-actions>
   </v-card>
@@ -87,6 +100,7 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
+      disabled: false,
       user: {
         name: undefined,
         email: undefined,
@@ -103,6 +117,7 @@ export default {
   },
   methods: {
     updateProfile () {
+      this.disabled = true
       Axios.put('/users/' + this.userId, this.user)
         .then(resp => {
           this.user = resp.data
@@ -116,6 +131,9 @@ export default {
             color: 'error',
             text: err.response.data
           })
+        })
+        .finally(() => {
+          this.disabled = false
         })
     }
   },

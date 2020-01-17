@@ -8,6 +8,7 @@
           wrap
         >
           <v-text-field
+            :disabled="disabled"
             v-model="project.name"
             label="Project name"
             class="pa-2"
@@ -18,6 +19,7 @@
           wrap
         >
           <v-text-field
+            :disabled="disabled"
             v-model="project.description"
             label="Project description"
             class="pa-2"
@@ -28,6 +30,7 @@
           wrap
         >
           <v-text-field
+            :disabled="disabled"
             v-model="project.elasticUrl"
             label="Elasticsearch url"
             class="pa-2"
@@ -38,6 +41,7 @@
           wrap
         >
           <v-text-field
+            :disabled="disabled"
             v-model="project.elasticIndex"
             label="Elasticsearch index"
             class="pa-2"
@@ -46,8 +50,22 @@
       </v-container>
       <v-card-actions>
         <v-spacer/>
-        <v-btn @click="updateProject">Update</v-btn>
-        <v-btn @click="deleteProject">Delete</v-btn>
+        <v-btn
+          color="success"
+          class="mr-3"
+          :disabled="disabled"
+          @click="updateProject"
+        >
+          Update
+        </v-btn>
+        <v-btn
+          color="error"
+          class="ml-3"
+          :disabled="disabled"
+          @click="deleteProject"
+        >
+          Delete
+        </v-btn>
         <v-spacer/>
       </v-card-actions>
       <v-card-title class="justify-center mt-4">Available templates</v-card-title>
@@ -61,13 +79,23 @@
         >
           {{ template.name }}
           <v-spacer />
-          <v-btn @click="editTemplate(template._id)">Edit template</v-btn>
+          <v-btn
+            class="mr-3"
+            color="info"
+            @click="editTemplate(template._id)"
+          >
+            Edit template
+          </v-btn>
         </v-layout>
       </v-container>
       <v-card-actions>
         <v-spacer/>
         <v-btn
-          @click="createNewTemplate">
+          :disabled="disabled"
+          @click="createNewTemplate"
+          class="mb-3"
+          color="info"
+        >
           Create new template
         </v-btn>
         <v-spacer/>
@@ -111,6 +139,7 @@ export default {
   },
   methods: {
     updateProject () {
+      this.disabled = true
       Axios.put('/projects/' + this.$router.currentRoute.params.projectId, this.project)
         .then(() => {
           event.$emit('notification', {
@@ -124,8 +153,12 @@ export default {
             text: err.response.data
           })
         })
+        .finally(() => {
+          this.disabled = false
+        })
     },
     deleteProject () {
+      this.disabled = true
       Axios.delete('/projects/' + this.$router.currentRoute.params.projectId)
         .then(() => {
           event.$emit('notification', {
@@ -139,6 +172,9 @@ export default {
             color: 'error',
             text: err.response.data
           })
+        })
+        .finally(() => {
+          this.disabled = false
         })
     },
     createNewTemplate () {

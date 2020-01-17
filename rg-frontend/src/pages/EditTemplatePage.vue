@@ -1,12 +1,13 @@
 <template>
   <v-card>
-    <v-card-title>Edit template</v-card-title>
+    <v-card-title class="justify-center">Edit template</v-card-title>
     <v-container grid-list-lg>
       <v-layout
         wrap
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="template.name"
           class="pa-3"
           label="Template name"/>
@@ -16,6 +17,7 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="template.description"
           class="pa-3"
           label="Template description"/>
@@ -25,12 +27,14 @@
         row
       >
         <v-text-field
+          :disabled="disabled"
           v-model="template.size"
           class="pa-3"
           label = "Default number of returned documents"
         />
       </v-layout>
       <v-data-table
+        :disabled="disabled"
         :headers="headers"
         :items="template.fields"
         :loading="loading"
@@ -71,6 +75,7 @@
         wrap
       >
         <v-text-field 
+          :disabled="disabled"
           v-model="chart.title"
           label="Title"
           class="pa-3"
@@ -81,6 +86,7 @@
         wrap
       >
         <v-select
+          :disabled="disabled"
           v-model="chart.countBy"
           :items="template.fields.map(x => x.name)"
           class="pa-3"
@@ -93,6 +99,7 @@
         wrap
       >
         <v-select
+          :disabled="disabled"
           v-model="chart.separateBy"
           :items="template.fields.map(x => x.name)"
           class="pa-3"
@@ -103,13 +110,19 @@
     <v-card-actions>
       <v-spacer/>
       <v-btn
-        class="pa-2"
-        @click="updateTemplate">
+        :disabled="disabled"
+        class="pa-2 mr-2 mb-3"
+        color="success"
+        @click="updateTemplate"
+      >
         Update template
       </v-btn>
       <v-btn
-        class="pa-2"
-        @click="deleteTemplate">
+        :disabled="disabled"
+        class="pa-2 ml-2 mb-3"
+        color="error"
+        @click="deleteTemplate"
+      >
         Delete template
       </v-btn>
       <v-spacer/>
@@ -125,6 +138,7 @@ export default {
   data () {
     return {
       loading: false,
+      disabled: false,
       headers: [
         {
           sortable: true,
@@ -161,6 +175,7 @@ export default {
     }
   },
   mounted () {
+    this.disabled = true
     this.loading = true
     Axios.get('/projects/' + this.$router.currentRoute.params.projectId + '/templates/' + this.$router.currentRoute.params.templateId)
       .then(resp => {
@@ -174,17 +189,18 @@ export default {
       })
       .finally(() => {
         this.loading = false
+        this.disabled = false
       })
   },
   methods: {
     updateTemplate () {
+      this.disabled = true;
       Axios.put('/projects/' + this.$router.currentRoute.params.projectId + '/templates/' + this.$router.currentRoute.params.templateId, this.template)
         .then(() => {
           event.$emit('notification', {
             color: 'success',
             text: 'Template updated'
           })
-          this.$router.push({ path: '/administration/' + this.$router.currentRoute.params.projectId })
         })
         .catch(err => {
           event.$emit('notification', {
@@ -192,8 +208,12 @@ export default {
             text: err.response.data
           })
         })
+        .finally(() => {
+          this.disabled = false
+        })
     },
     deleteTemplate () {
+      this.disabled = true
       Axios.delete('/projects/' + this.$router.currentRoute.params.projectId + '/templates/' + this.$router.currentRoute.params.templateId)
         .then( () => {
           event.$emit('notification', {
@@ -207,6 +227,9 @@ export default {
             color: 'error',
             text: err.response.data
           })
+        })
+        .finally(() => {
+          this.disabled = false
         })
     }
   }
