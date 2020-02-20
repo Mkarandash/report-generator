@@ -101,14 +101,19 @@
         <v-spacer/>
       </v-card-actions>
     </v-card>
+    <delete-project-dialog></delete-project-dialog>
   </div>
 </template>
 
 <script>
 import Axios from '@/plugins/axios'
 import { event } from '@/main'
+import DeleteProjectDialog from '@/components/DeleteProjectDialog.vue'
 
 export default {
+  components:{
+    'delete-project-dialog': DeleteProjectDialog
+  },
   data () {
     return {
       project: {},
@@ -158,24 +163,7 @@ export default {
         })
     },
     deleteProject () {
-      this.disabled = true
-      Axios.delete('/projects/' + this.$router.currentRoute.params.projectId)
-        .then(() => {
-          event.$emit('notification', {
-            color: 'success',
-            text: 'Project has been deleted'
-          })
-          this.$router.push({ path: '/administration' })
-        })
-        .catch(err => {
-          event.$emit('notification', {
-            color: 'error',
-            text: err.response.data
-          })
-        })
-        .finally(() => {
-          this.disabled = false
-        })
+      event.$emit('deleteProject')
     },
     createNewTemplate () {
       this.$router.push('/administration/' + this.$router.currentRoute.params.projectId + '/new')

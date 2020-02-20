@@ -42,6 +42,21 @@
             </v-list-item-content>
           </v-list-item>
       </v-list>
+      <template v-slot:append>
+        <v-list dense>
+          <v-list-item
+            style="cursor: pointer;"
+            @click="reportIssue"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-bug</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Report an issue</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </template>
     </v-navigation-drawer>
     <exit-dialog></exit-dialog>
   </v-card>
@@ -58,6 +73,8 @@ export default {
   data () {
     return {
       mini: false,
+      email: 'm.kondrashoff@gmail.com',
+      subject: '[RR_issue]',
       items: [
         { title: 'Search', icon: 'mdi-file-find', to: '/projects' },
         { title: 'Administration', icon: 'mdi-pencil-box', to: '/administration' },
@@ -69,6 +86,9 @@ export default {
   methods: {
     exit() {
       event.$emit('exit')
+    },
+    reportIssue () {
+      document.location = "mailto:" + this.email + "?subject=" + this.subject;
     }
   }
 }

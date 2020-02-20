@@ -127,14 +127,19 @@
       </v-btn>
       <v-spacer/>
     </v-card-actions>
+    <delete-template-dialog></delete-template-dialog>
   </v-card>
 </template>
 
 <script>
 import { event } from '@/main'
 import Axios from '@/plugins/axios'
+import DeleteTemplateDialog from '@/components/DeleteTemplateDialog.vue'
 
 export default {
+  components: {
+    'delete-template-dialog': DeleteTemplateDialog
+  },
   data () {
     return {
       loading: false,
@@ -213,24 +218,7 @@ export default {
         })
     },
     deleteTemplate () {
-      this.disabled = true
-      Axios.delete('/projects/' + this.$router.currentRoute.params.projectId + '/templates/' + this.$router.currentRoute.params.templateId)
-        .then( () => {
-          event.$emit('notification', {
-            color: 'success',
-            text: 'Template deleted'
-          })
-          this.$router.push({ path: '/administration/' + this.$router.currentRoute.params.projectId })
-        })
-        .catch(err => {
-          event.$emit('notification', {
-            color: 'error',
-            text: err.response.data
-          })
-        })
-        .finally(() => {
-          this.disabled = false
-        })
+      event.$emit('deleteTemplate')
     }
   }
 }

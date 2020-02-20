@@ -16,16 +16,10 @@
             class="ml-3 mt-3"
             style="cursor: pointer;"
             @click="createNewProject"
+            :elevation="hover ? 15 : 1"
           >
             <v-card-title>Create new project</v-card-title>
             <v-card-text>Create new project from scratch</v-card-text>
-            <v-expand-transition>
-              <div
-                v-if="hover"
-                class="d-flex transition-fast-in-fast-out blue v-card--reveal display-3 white--text"
-                style="height: 100%;"
-              ></div>
-            </v-expand-transition>
           </v-card>
         </v-hover>
       </v-flex>
@@ -43,16 +37,10 @@
             class="ml-3 mt-3"
             style="cursor: pointer;"
             @click="editProject(project._id)"
+            :elevation="hover ? 15 : 1"
           >
             <v-card-title>{{ project.name }}</v-card-title>
             <v-card-text>{{ project.description }}</v-card-text>
-            <v-expand-transition>
-              <div
-                v-if="hover"
-                class="d-flex transition-fast-in-fast-out blue v-card--reveal display-3 white--text"
-                style="height: 100%;"
-              ></div>
-            </v-expand-transition>
           </v-card>
         </v-hover>
       </v-flex>

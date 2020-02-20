@@ -1,14 +1,24 @@
 <template>
   <v-dialog
     v-model="dialog"
+    persistent 
     width="500">
     <v-card>
-      <v-card-title class="justify-center pa-3">Are you sure you want to leave?</v-card-title>
-      <v-card-text class="pa-3">All unsaved data will be lost</v-card-text>
+      <v-card-title
+        class="justify-center pa-3 white--text"
+        style="background-color: #2196f3;"
+      >
+        Are you sure you want to leave?
+      </v-card-title>
+      <v-card-text class="pa-3">
+        <div>
+          <p class="text-center">All unsaved data will be lost</p>
+        </div>
+      </v-card-text>
       <v-card-actions>
         <v-spacer/>
         <v-btn
-          color="success"
+          color="info"
           @click="dialog = false"
         >
           Cancel

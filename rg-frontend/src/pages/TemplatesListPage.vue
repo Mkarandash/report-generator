@@ -3,7 +3,34 @@
     fluid
     grid-list-xl
   >
-    <v-layout wrap>
+    <v-layout
+      v-if="templates.length < 1"
+      wrap
+    >
+      <v-flex
+        xl3
+        lg4
+        md6
+        sm12
+        xs12
+      >
+        <v-hover v-slot:default="{ hover }">
+          <v-card
+            class="ml-3 mt-3"
+            style="cursor: pointer;"
+            @click="createNewTemplate"
+            :elevation="hover ? 15 : 1"
+          >
+            <v-card-title>Oops!..</v-card-title>
+            <v-card-text>You dont have any templates yet. Try creating one</v-card-text>
+          </v-card>
+        </v-hover>
+      </v-flex>
+    </v-layout>
+    <v-layout
+      v-else
+      wrap
+    >
       <v-flex
         v-for="template in templates"
         :key="template._id"
@@ -18,16 +45,10 @@
             class="ml-3 mt-3"
             style="cursor: pointer;"
             @click="openTemplate(template._id)"
+            :elevation="hover ? 15 : 1"
           >
             <v-card-title>{{ template.name }}</v-card-title>
             <v-card-text>{{ template.description }}</v-card-text>
-            <v-expand-transition>
-              <div
-                v-if="hover"
-                class="d-flex transition-fast-in-fast-out blue v-card--reveal display-3 white--text"
-                style="height: 100%;"
-              ></div>
-            </v-expand-transition>
           </v-card>
         </v-hover>
       </v-flex>
@@ -58,8 +79,11 @@ export default {
       })
   },
   methods: {
-    openTemplate: function (templateId) {
+    openTemplate (templateId) {
       this.$router.push({ path: '/projects/' + this.$router.currentRoute.params.projectId + '/' + templateId })
+    },
+    createNewTemplate () {
+      this.$router.push({ path: '/administration/' + this.$router.currentRoute.params.projectId + '/new'})
     }
   }
 }

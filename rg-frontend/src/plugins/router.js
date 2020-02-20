@@ -12,7 +12,7 @@ import EditProjectPage from '@/pages/EditProjectPage.vue'
 import CreateTemplatePage from '@/pages/CreateTemplatePage.vue'
 import EditTemplatePage from '@/pages/EditTemplatePage.vue'
 import UserProfilePage from '@/pages/UserProfilePage.vue'
-//import SettingsPage from '@/pages/SettingsPage.vue'
+import SettingsPage from '@/pages/SettingsPage.vue'
 
 Vue.use(Router)
 
@@ -96,13 +96,13 @@ const router = new Router({
         requiresAuth: true
       }
     },
-   /* {
+    {
       path: '/settings',
       component: SettingsPage,
       meta: {
         requiresAuth: true
       }
-    },*/
+    },
     {
       path: '*',
       redirect: '/projects'
